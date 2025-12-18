@@ -1,3 +1,90 @@
 @font-face {font-family: 'Poppins';font-style: normal;font-weight: 400;font-display: swap; src: url(https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJbecmNE.woff2) format('woff2'); unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;}
 @font-face {font-family: 'Poppins';font-style: normal;font-weight: 400;font-display: swap;src: url(https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJnecmNE.woff2) format('woff2');unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;}
 @font-face {font-family: 'Poppins';font-style: normal;font-weight: 400;font-display: swap;src: url(https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJfecg.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}html,body {font-size:16px;font-family: "Poppins", sans-serif;}a:link {text-decoration:none;}.banner {max-width:100%; height: 350px; object-fit: cover;}.plugin {margin-top:8px;margin-bottom:8px;padding:8px;}
+
+/* Header Top Section */
+.header-top {
+	background-color: #f5f5f5;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.btn-header-top {
+	background-color: #4a4a4a;
+	color: #d0d0d0;
+	border: none;
+	border-radius: 4px;
+	padding: 6px 16px;
+	font-size: 14px;
+	font-weight: 400;
+	transition: background-color 0.2s;
+}
+
+.btn-header-top:hover {
+	background-color: #3a3a3a;
+	color: #e0e0e0;
+}
+
+.header-logo {
+	color: #2a2a2a;
+	font-size: 24px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.header-logo:hover {
+	color: #1a1a1a;
+	text-decoration: none;
+}
+
+.header-link {
+	color: #2a2a2a;
+	font-size: 14px;
+	text-decoration: none;
+	font-weight: 400;
+}
+
+.header-link:hover {
+	color: #1a1a1a;
+	text-decoration: none;
+}
+
+/* Bottom Navigation Section */
+.navbar-nav-bottom {
+	background-color: #e8e8e8;
+	border-top: 1px solid #d0d0d0;
+	padding: 0;
+}
+
+.navbar-nav-bottom .navbar-nav {
+	flex-direction: row;
+	gap: 0;
+}
+
+.navbar-nav-bottom .nav-link {
+	color: #2a2a2a;
+	font-size: 14px;
+	padding: 12px 20px;
+	text-decoration: none;
+	transition: background-color 0.2s;
+	display: flex;
+	align-items: center;
+}
+
+.navbar-nav-bottom .nav-link:hover {
+	background-color: #d8d8d8;
+	color: #1a1a1a;
+}
+
+.navbar-nav-bottom .nav-link.active {
+	background-color: #d0d0d0;
+	color: #1a1a1a;
+	font-weight: 500;
+}
+
+.navbar-nav-bottom .navbar-toggler {
+	border-color: #4a4a4a;
+}
+
+.navbar-nav-bottom .navbar-toggler-icon {
+	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2842, 42, 42, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
