@@ -66,7 +66,7 @@ if (isset($categories) && is_object($categories)) {
 		<!-- Category Section -->
 		<div class="category-section mb-5">
 			<!-- Category Title -->
-			<div class="d-flex justify-content-between align-items-center mb-3">
+			<div class="d-flex justify-content-between align-items-center">
 				<h2 class="category-title"><?php echo htmlspecialchars($categoryName) ?></h2>
 				<a href="<?php echo $categoryUrl ?>" class="btn btn-view-more">View More →</a>
 			</div>
