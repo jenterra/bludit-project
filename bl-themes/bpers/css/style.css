@@ -506,3 +506,254 @@
 		padding: 15px;
 	}
 }
+
+/* Main Layout - Sidebars */
+.main-layout {
+	margin: 0;
+}
+
+.col-sidebar {
+	flex: 0 0 16.666667%; /* 1/6 width */
+	max-width: 16.666667%;
+	padding: 1rem;
+	position: sticky;
+	top: 1rem;
+	align-self: flex-start;
+	height: fit-content;
+	max-height: calc(100vh - 2rem);
+	overflow-y: auto;
+}
+
+.col-sidebar-left {
+	padding-right: 1rem;
+}
+
+.col-sidebar-right {
+	padding-left: 1rem;
+}
+
+.col-main-content {
+	flex: 0 0 66.666667%; /* 4/6 width */
+	max-width: 66.666667%;
+	padding: 0 1rem;
+}
+
+/* Sidebar Widget Styles */
+.sidebar-widget {
+	background: #fff;
+	border-radius: 8px;
+	padding: 1rem;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	margin-bottom: 1.5rem;
+}
+
+.widget-header {
+	margin-bottom: 1rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 2px solid #e0e0e0;
+}
+
+.widget-title {
+	font-size: 1.1rem;
+	font-weight: 600;
+	color: #2a2a2a;
+	margin: 0;
+}
+
+.widget-content {
+	width: 100%;
+}
+
+/* Weather Widget Styles */
+.weather-container {
+	min-height: 150px;
+}
+
+.weather-placeholder,
+.weather-info,
+.weather-error {
+	padding: 1rem;
+	text-align: center;
+}
+
+.weather-temp {
+	font-size: 2rem;
+	font-weight: 700;
+	color: #2a2a2a;
+	margin: 0.5rem 0;
+}
+
+.weather-desc {
+	font-size: 0.9rem;
+	color: #666;
+	text-transform: capitalize;
+	margin: 0.5rem 0;
+}
+
+.weather-city {
+	font-size: 0.85rem;
+	color: #999;
+	margin: 0.5rem 0;
+}
+
+.weather-details {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	margin-top: 1rem;
+	font-size: 0.8rem;
+	color: #666;
+}
+
+.weather-error {
+	color: #999;
+	font-size: 0.9rem;
+}
+
+.weather-loading {
+	padding: 1rem;
+	text-align: center;
+	color: #999;
+}
+
+.weather-icon {
+	width: 64px;
+	height: 64px;
+	margin: 0 auto 0.5rem;
+	display: block;
+}
+
+.weather-icon-emoji {
+	font-size: 3rem;
+	text-align: center;
+	margin-bottom: 0.5rem;
+	line-height: 1;
+}
+
+.weather-info {
+	padding: 1rem;
+	text-align: center;
+}
+
+/* WeatherWidget.io iframe styling */
+.weather-container iframe {
+	border: none;
+	width: 100%;
+	display: block;
+}
+
+.weatherwidget-io {
+	display: block;
+	text-decoration: none;
+	color: transparent;
+	width: 100%;
+	min-height: 150px;
+}
+
+/* Ads Widget Styles */
+.ad-container {
+	width: 100%;
+	text-align: center;
+}
+
+/* Left Sidebar Ad - Center vertically */
+.col-sidebar-left .ad-container-left {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: calc(80vh - 2rem);
+}
+
+/* Right Sidebar Ad - Shorter height */
+.ad-container-right {
+	max-height: 400px;
+	overflow: hidden;
+}
+
+.ad-container-right .adsbygoogle {
+	max-height: 400px !important;
+	overflow: hidden;
+}
+
+/* Placeholder styling (shown when no ad code is added) */
+.ad-placeholder {
+	background: #f5f5f5;
+	border: 1px dashed #d0d0d0;
+	border-radius: 4px;
+	padding: 1rem;
+	text-align: center;
+}
+
+.ad-label {
+	font-size: 0.75rem;
+	color: #999;
+	text-transform: uppercase;
+	margin: 0 0 0.5rem 0;
+}
+
+.ad-box {
+	min-height: 250px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #fafafa;
+	border-radius: 4px;
+}
+
+.ad-text {
+	font-size: 0.9rem;
+	color: #ccc;
+	margin: 0;
+	text-align: center;
+	line-height: 1.6;
+}
+
+/* Actual ad code styling (Google AdSense, etc.) */
+.ad-container ins,
+.ad-container .adsbygoogle {
+	display: block;
+	width: 100%;
+	min-height: 250px;
+	margin: 0 auto;
+}
+
+.ad-container script {
+	display: none;
+}
+
+/* Responsive ad images */
+.ad-container img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 0 auto;
+}
+
+/* Responsive: Below 1500px - Remove left sidebar, keep right sidebar */
+@media (max-width: 1500px) {
+	.col-sidebar-left {
+		display: none;
+	}
+	
+	.col-main-content {
+		flex: 0 0 83.333333%; /* 5/6 width when left sidebar is hidden */
+		max-width: 83.333333%;
+	}
+	
+	.col-sidebar-right {
+		flex: 0 0 16.666667%; /* 1/6 width */
+		max-width: 16.666667%;
+	}
+}
+
+/* Responsive: Below 1100px - Remove right sidebar too */
+@media (max-width: 1100px) {
+	.col-sidebar-right {
+		display: none;
+	}
+	
+	.col-main-content {
+		flex: 0 0 100%; /* Full width when both sidebars are hidden */
+		max-width: 100%;
+	}
+}

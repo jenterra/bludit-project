@@ -1,6 +1,12 @@
 <main class="container-fluid">
-<div class="row">
-<div class="col-md-9 p-1">
+<div class="row main-layout">
+	<!-- Left Sidebar - Ads Only -->
+	<aside class="col-sidebar col-sidebar-left">
+		<?php include(THEME_DIR_PHP.'widget/ads-left.php'); ?>
+	</aside>
+	
+	<!-- Main Content - 4/6 width -->
+	<div class="col-main-content p-1">
 <?php if ($page->coverImage()): ?>
 <img class="img-fluid" width="100%" height="100%" alt="<?php echo $page->description(); ?>" src="<?php echo $page->coverImage(); ?>"/>
 <?php endif ?>
@@ -20,11 +26,14 @@
 	<div class="comments-container">
 		<?php Theme::plugins('pageEnd'); ?>
 	</div>
-</div>
-<?php endif; ?>
-</div>
-<div class="col-md-3 p-3 border-start">
-<?php include(THEME_DIR_PHP.'section/sidebar.php'); ?>
-</div>
+	</div>
+	<?php endif; ?>
+	</div>
+	
+	<!-- Right Sidebar - Weather + Ads -->
+	<aside class="col-sidebar col-sidebar-right">
+		<?php include(THEME_DIR_PHP.'widget/weather.php'); ?>
+		<?php include(THEME_DIR_PHP.'widget/ads-right.php'); ?>
+	</aside>
 </div>
 </main>

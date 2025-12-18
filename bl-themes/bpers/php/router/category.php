@@ -1,6 +1,14 @@
 <main class="container-fluid">
 <?php Theme::plugins('pageBegin'); ?>
 
+<div class="row main-layout">
+	<!-- Left Sidebar - Ads Only -->
+	<aside class="col-sidebar col-sidebar-left">
+		<?php include(THEME_DIR_PHP.'widget/ads-left.php'); ?>
+	</aside>
+	
+	<!-- Main Content - 4/6 width -->
+	<div class="col-main-content">
 <?php
 // Get current category
 global $url, $categories;
@@ -54,6 +62,14 @@ global $content;
 	<p class="display-6"><?php $language->p('No pages found') ?></p>
 </div>
 <?php endif; ?>
+	</div>
+	
+	<!-- Right Sidebar - Weather + Ads -->
+	<aside class="col-sidebar col-sidebar-right">
+		<?php include(THEME_DIR_PHP.'widget/weather.php'); ?>
+		<?php include(THEME_DIR_PHP.'widget/ads-right.php'); ?>
+	</aside>
+</div>
 
 </main>
 

@@ -1,6 +1,14 @@
 <main class="container-fluid">
 <?php Theme::plugins('pageBegin'); ?>
 
+<div class="row main-layout">
+	<!-- Left Sidebar - Ads Only -->
+	<aside class="col-sidebar col-sidebar-left">
+		<?php include(THEME_DIR_PHP.'widget/ads-left.php'); ?>
+	</aside>
+	
+	<!-- Main Content - 4/6 width -->
+	<div class="col-main-content">
 <?php
 // Get all categories and display carousels
 global $categories;
@@ -145,5 +153,13 @@ if (isset($categories) && is_object($categories)) {
 if (!$hasContent): ?>
 	<div class="mt-4 p-3 text-center display-4"><?php $language->p('No pages found') ?></div>
 <?php endif; ?>
+	</div>
+	
+	<!-- Right Sidebar - Weather + Ads -->
+	<aside class="col-sidebar col-sidebar-right">
+		<?php include(THEME_DIR_PHP.'widget/weather.php'); ?>
+		<?php include(THEME_DIR_PHP.'widget/ads-right.php'); ?>
+	</aside>
+</div>
 
 </main>
