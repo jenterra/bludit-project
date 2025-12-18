@@ -72,3 +72,18 @@
       })
   })
 })()
+
+// Carousel scrolling function
+function scrollCarousel(categoryKey, direction) {
+  const carousel = document.getElementById('carousel-' + categoryKey)
+  if (!carousel) return
+  
+  const scrollAmount = 300 // pixels to scroll
+  const currentScroll = carousel.scrollLeft
+  const newScroll = currentScroll + (scrollAmount * direction)
+  
+  carousel.scrollTo({
+    left: newScroll,
+    behavior: 'smooth'
+  })
+}
