@@ -35,7 +35,9 @@
 				<!-- Categories -->
 				<?php 
 				global $categories;
-				foreach ($categories->keys() as $categoryKey): 
+				// Use sorted categories if available
+				$categoryKeys = method_exists($categories, 'keysSortedByPosition') ? $categories->keysSortedByPosition() : $categories->keys();
+				foreach ($categoryKeys as $categoryKey): 
 					$categoryName = $categories->getName($categoryKey);
 					$categoryUrl = DOMAIN_CATEGORIES . $categoryKey;
 					$isActive = ($url->whereAmI()=='category' && $url->slug()==$categoryKey);

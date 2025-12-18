@@ -1,1 +1,0 @@
-B-Pers is a free and open source code project for your website or news blog, developed with bludit flatifle cms without database making your site super fast. Download and Run this project on your host then your site is live , To make your site very beautiful, you can purchase the B-Pers plugin widget. B-Pers Plugins Download https://bludit.axcora.com/bpers/

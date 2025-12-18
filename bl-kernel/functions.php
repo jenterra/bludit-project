@@ -306,6 +306,27 @@ function changePluginsPosition($pluginClassList)
   return true;
 }
 
+function changeCategoriesPosition($categoryKeyList)
+{
+  global $categories;
+  global $syslog;
+  global $L;
+
+  if ($categories->updatePositions($categoryKeyList)) {
+    // Add to syslog
+    $syslog->add(array(
+      'dictionaryKey' => 'categories-sorted',
+      'notes' => ''
+    ));
+
+    Alert::set($L->g('The changes have been saved'));
+    return true;
+  }
+
+  Alert::set($L->g('Error trying to update category positions'), ALERT_STATUS_FAIL);
+  return false;
+}
+
 /*
 	Create a new page
 

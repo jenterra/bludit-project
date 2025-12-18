@@ -475,3 +475,45 @@
 		height: 160px;
 	}
 }
+
+/* Comments Section */
+.comments-section {
+	border-top: 2px solid #e0e0e0;
+	margin-top: 2rem;
+	padding-top: 2rem;
+}
+
+.comments-title {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: #2a2a2a;
+	margin-bottom: 1.5rem;
+}
+
+.comments-container {
+	background: #f9f9f9;
+	border-radius: 8px;
+	padding: 20px;
+	min-height: 200px;
+}
+
+/* Disqus styling */
+#disqus_thread {
+	margin-top: 20px;
+}
+
+/* Responsive comments */
+@media (max-width: 768px) {
+	.comments-section {
+		padding: 1rem;
+		margin-top: 1.5rem;
+	}
+	
+	.comments-title {
+		font-size: 1.25rem;
+	}
+	
+	.comments-container {
+		padding: 15px;
+	}
+}
