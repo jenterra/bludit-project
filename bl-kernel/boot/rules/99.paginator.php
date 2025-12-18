@@ -12,7 +12,7 @@ if ($url->whereAmI()=='admin') {
 	$tagKey = $url->slug();
 	$numberOfItems = $tags->numberOfPages($tagKey);
 } elseif ($url->whereAmI()=='category') {
-	$itemsPerPage = $site->itemsPerPage();
+	$itemsPerPage = 10; // 10 posts per page for category pages
 	$categoryKey = $url->slug();
 	$numberOfItems = $categories->numberOfPages($categoryKey);
 } else {
