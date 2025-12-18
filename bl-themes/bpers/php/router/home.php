@@ -8,8 +8,8 @@ $hasContent = false;
 
 // Check if categories object exists and has data
 if (isset($categories) && is_object($categories)) {
-	// Get all category keys dynamically
-	$categoryKeys = $categories->keys();
+	// Get all category keys dynamically - sorted by position if available
+	$categoryKeys = method_exists($categories, 'keysSortedByPosition') ? $categories->keysSortedByPosition() : $categories->keys();
 	
 	if (!empty($categoryKeys)) {
 		foreach ($categoryKeys as $categoryKey): 

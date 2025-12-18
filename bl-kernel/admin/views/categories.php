@@ -8,6 +8,12 @@ echo Bootstrap::link(array(
 	'icon'=>'plus'
 ));
 
+echo Bootstrap::link(array(
+	'title'=>$L->g('Category order'),
+	'href'=>HTML_PATH_ADMIN_ROOT.'categories-position',
+	'icon'=>'sort'
+));
+
 echo '
 <table class="table table-striped mt-3">
 	<thead>
@@ -19,7 +25,10 @@ echo '
 	<tbody>
 ';
 
-foreach ($categories->keys() as $key) {
+// Use sorted categories if available, otherwise use default order
+$categoryKeys = method_exists($categories, 'keysSortedByPosition') ? $categories->keysSortedByPosition() : $categories->keys();
+
+foreach ($categoryKeys as $key) {
 	$category = new Category($key);
 	echo '<tr>';
 	echo '<td><a href="'.HTML_PATH_ADMIN_ROOT.'edit-category/'.$key.'">'.$category->name().'</a></td>';

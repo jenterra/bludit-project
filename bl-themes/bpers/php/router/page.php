@@ -12,6 +12,16 @@
 <?php endif ?>
 <?php echo $page->content(); ?>
 </article>
+
+<!-- Comments Section -->
+<?php if (!$page->isStatic() && !$url->notFound() && $page->allowComments()): ?>
+<div class="comments-section p-3 mt-4">
+	<h3 class="comments-title mb-4"><?php echo $L->get('Comments') ?: 'Comments'; ?></h3>
+	<div class="comments-container">
+		<?php Theme::plugins('pageEnd'); ?>
+	</div>
+</div>
+<?php endif; ?>
 </div>
 <div class="col-md-3 p-3 border-start">
 <?php include(THEME_DIR_PHP.'section/sidebar.php'); ?>
