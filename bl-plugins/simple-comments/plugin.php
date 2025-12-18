@@ -4,9 +4,11 @@ class pluginSimpleComments extends Plugin {
 
 	public function init()
 	{
-		// Only position for now (used by Bludit to sort plugins)
+		// Position and reCAPTCHA config
 		$this->dbFields = array(
-			'position'=>1
+			'position'=>1,
+			'recaptchaSiteKey'=>'',
+			'recaptchaSecretKey'=>''
 		);
 	}
 
@@ -19,10 +21,25 @@ class pluginSimpleComments extends Plugin {
 		$html .= $this->description() ?: 'Simple local comments. Stores comments per page in flat files.';
 		$html .= '</div>';
 
+		// Position
 		$html .= '<div>';
 		$html .= '<label>'.$L->get('Position').'</label>';
 		$html .= '<input name="position" type="number" min="1" value="'.$this->getValue('position').'">';
 		$html .= '<span class="tip">'.$L->get('Position on the plugin list').'</span>';
+		$html .= '</div>';
+
+		// reCAPTCHA site key
+		$html .= '<div>';
+		$html .= '<label>reCAPTCHA Site Key</label>';
+		$html .= '<input name="recaptchaSiteKey" type="text" value="'.$this->getValue('recaptchaSiteKey').'">';
+		$html .= '<span class="tip">Get this from your Google reCAPTCHA admin (v2 checkbox is recommended).</span>';
+		$html .= '</div>';
+
+		// reCAPTCHA secret key
+		$html .= '<div>';
+		$html .= '<label>reCAPTCHA Secret Key</label>';
+		$html .= '<input name="recaptchaSecretKey" type="text" value="'.$this->getValue('recaptchaSecretKey').'">';
+		$html .= '<span class="tip">Server-side secret key from Google reCAPTCHA.</span>';
 		$html .= '</div>';
 
 		return $html;
@@ -50,14 +67,26 @@ class pluginSimpleComments extends Plugin {
 
 		$pageUUID = $page->uuid();
 
-		// Handle new comment POST (simple, no JS required)
+		// Handle new comment POST
 		$message = '';
 		if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sc_page_uuid']) && $_POST['sc_page_uuid'] === $pageUUID) {
 
 			$name    = isset($_POST['sc_name']) ? trim($_POST['sc_name']) : '';
 			$comment = isset($_POST['sc_comment']) ? trim($_POST['sc_comment']) : '';
 
-			if ($name !== '' && $comment !== '') {
+			// If reCAPTCHA keys are configured, enforce validation
+			$siteKey   = $this->getValue('recaptchaSiteKey');
+			$secretKey = $this->getValue('recaptchaSecretKey');
+			$recaptchaOk = true;
+
+			if (!empty($siteKey) && !empty($secretKey)) {
+				$recaptchaOk = $this->verifyRecaptcha($secretKey);
+				if (!$recaptchaOk) {
+					$message = '<div class="alert alert-danger mb-3">reCAPTCHA verification failed. Please try again.</div>';
+				}
+			}
+
+			if ($recaptchaOk && $name !== '' && $comment !== '') {
 				// Load existing comments
 				$comments = $this->loadComments($pageUUID);
 
@@ -70,7 +99,7 @@ class pluginSimpleComments extends Plugin {
 
 				$this->saveComments($pageUUID, $comments);
 				$message = '<div class="alert alert-success mb-3">Thank you, your comment has been posted.</div>';
-			} else {
+			} elseif ($recaptchaOk) {
 				$message = '<div class="alert alert-danger mb-3">Please enter your name and a comment.</div>';
 			}
 		}
@@ -82,6 +111,42 @@ class pluginSimpleComments extends Plugin {
 	}
 
 	// ---- Internal helpers --------------------------------------------------
+
+	// Verify Google reCAPTCHA v2 (or compatible) response
+	private function verifyRecaptcha($secretKey)
+	{
+		if (!isset($_POST['g-recaptcha-response'])) {
+			return false;
+		}
+
+		$token = $_POST['g-recaptcha-response'];
+		$remoteIp = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+
+		$data = http_build_query(array(
+			'secret'   => $secretKey,
+			'response' => $token,
+			'remoteip' => $remoteIp
+		));
+
+		$options = array(
+			'http' => array(
+				'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+				'method'  => 'POST',
+				'content' => $data,
+				'timeout' => 5
+			)
+		);
+
+		$context  = stream_context_create($options);
+		$result   = @file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, $context);
+
+		if ($result === false) {
+			return false;
+		}
+
+		$json = json_decode($result, true);
+		return is_array($json) && isset($json['success']) && $json['success'] == true;
+	}
 
 	private function commentsFile($pageUUID)
 	{
@@ -148,6 +213,9 @@ class pluginSimpleComments extends Plugin {
 		}
 
 		// Comment form
+		$siteKey   = $this->getValue('recaptchaSiteKey');
+		$secretKey = $this->getValue('recaptchaSecretKey');
+
 		$html .= '<form method="post" class="sc-comment-form">';
 		$html .= '<input type="hidden" name="sc_page_uuid" value="'.Sanitize::html($pageUUID).'">';
 
@@ -160,6 +228,14 @@ class pluginSimpleComments extends Plugin {
 		$html .= '<label class="form-label" for="sc_comment">Comment</label>';
 		$html .= '<textarea class="form-control" id="sc_comment" name="sc_comment" rows="4" required></textarea>';
 		$html .= '</div>';
+
+		// reCAPTCHA widget if configured
+		if (!empty($siteKey) && !empty($secretKey)) {
+			$html .= '<div class="mb-3 sc-recaptcha">';
+			$html .= '<div class="g-recaptcha" data-sitekey="'.Sanitize::html($siteKey).'"></div>';
+			$html .= '</div>';
+			$html .= '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+		}
 
 		$html .= '<button type="submit" class="btn btn-primary">Post comment</button>';
 
