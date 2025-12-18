@@ -33,6 +33,12 @@ echo Bootstrap::formOpen(array(
 		'value'=>''
 	));
 
+	// Cover video
+	echo Bootstrap::formInputHidden(array(
+		'name'=>'coverVideo',
+		'value'=>''
+	));
+
 	// Content
 	echo Bootstrap::formInputHidden(array(
 		'name'=>'content',
@@ -44,6 +50,7 @@ echo Bootstrap::formOpen(array(
 <div id="jseditorToolbar" class="mb-1">
 	<div id="jseditorToolbarRight" class="btn-group btn-group-sm float-right" role="group" aria-label="Toolbar right">
 		<button type="button" class="btn btn-light" id="jsmediaManagerOpenModal" data-toggle="modal" data-target="#jsmediaManagerModal"><span class="fa fa-image"></span> <?php $L->p('Images') ?></button>
+		<button type="button" class="btn btn-light" id="jsvideoManagerOpenModal" data-toggle="modal" data-target="#jsvideoManagerModal"><span class="fa fa-video-camera"></span> <?php $L->p('Videos') ?></button>
 		<button type="button" class="btn btn-light" id="jsoptionsSidebar" style="z-index:30"><span class="fa fa-cog"></span> <?php $L->p('Options') ?></button>
 	</div>
 
@@ -128,6 +135,32 @@ echo Bootstrap::formOpen(array(
 					$("#jsbuttonRemoveCoverImage").on("click", function() {
 						$("#jscoverImage").val('');
 						$("#jscoverImagePreview").attr('src', HTML_PATH_CORE_IMG+'default.svg');
+					});
+				});
+			</script>
+
+			<!-- Cover Video -->
+			<label class="mt-4 mb-2 pb-2 border-bottom text-uppercase w-100"><?php $L->p('Cover Video') ?></label>
+			<div>
+				<video id="jscoverVideoPreview" class="mx-auto d-block w-100" style="display:none;" muted playsinline></video>
+			</div>
+			<div class="mt-2 text-center">
+				<button type="button" id="jsbuttonSelectCoverVideo" class="btn btn-primary btn-sm"><?php echo $L->g('Select cover video') ?></button>
+				<button type="button" id="jsbuttonRemoveCoverVideo" class="btn btn-secondary btn-sm"><?php echo $L->g('Remove cover video') ?></button>
+			</div>
+			<script>
+				$(document).ready(function() {
+					$("#jsbuttonSelectCoverVideo").on("click", function() {
+						openVideoManager();
+					});
+
+					$("#jsbuttonRemoveCoverVideo").on("click", function() {
+						if ($("#jscoverVideo").length) {
+							$("#jscoverVideo").val('');
+						}
+						if ($("#jscoverVideoPreview").length) {
+							$("#jscoverVideoPreview").attr('src', '').hide();
+						}
 					});
 				});
 			</script>
@@ -427,6 +460,7 @@ echo Bootstrap::formOpen(array(
 
 <!-- Modal for Media Manager -->
 <?php include(PATH_ADMIN_THEMES.'booty/html/media.php'); ?>
+<?php include(PATH_ADMIN_THEMES.'booty/html/media-videos.php'); ?>
 
 <script>
 $(document).ready(function() {

@@ -7,8 +7,16 @@
 	
 	<!-- Main Content - 4/6 width -->
 	<div class="col-main-content p-1">
-<?php if ($page->coverImage()): ?>
-<img class="img-fluid" width="100%" height="100%" alt="<?php echo $page->description(); ?>" src="<?php echo $page->coverImage(); ?>"/>
+<?php
+	$coverVideo = method_exists($page, 'coverVideo') ? $page->coverVideo() : false;
+	$coverImage = $page->coverImage();
+?>
+<?php if ($coverVideo): ?>
+<div class="post-cover-video-wrapper mb-3">
+	<video class="post-cover-video" src="<?php echo $coverVideo; ?>" controls playsinline style="width:100%;height:auto;"></video>
+</div>
+<?php elseif ($coverImage): ?>
+<img class="img-fluid" width="100%" height="100%" alt="<?php echo $page->description(); ?>" src="<?php echo $coverImage; ?>"/>
 <?php endif ?>
 <article class="p-3">
 <h1 class="display-4"><a class="link-body-emphasis" href="<?php echo $page->permalink(); ?>"><?php echo $page->title(); ?></a></h1>

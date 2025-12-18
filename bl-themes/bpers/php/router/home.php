@@ -85,11 +85,22 @@ if (isset($categories) && is_object($categories)) {
 				<div class="carousel-container" id="carousel-<?php echo htmlspecialchars($categoryKey) ?>">
 					<div class="carousel-track">
 						<?php foreach ($carouselPosts as $page): ?>
+						<?php
+							$coverVideo = method_exists($page, 'coverVideo') ? $page->coverVideo() : false;
+							$coverImage = $page->coverImage();
+						?>
 						<div class="carousel-item">
 							<a href="<?php echo $page->permalink(); ?>" class="carousel-card">
-								<?php if ($page->coverImage()): ?>
+								<?php if ($coverVideo): ?>
+								<div class="carousel-image video-thumb">
+									<video class="carousel-video" src="<?php echo $coverVideo; ?>" muted playsinline></video>
+									<div class="video-play-overlay">
+										<span class="video-play-icon">&#9658;</span>
+									</div>
+								</div>
+								<?php elseif ($coverImage): ?>
 								<div class="carousel-image">
-									<img src="<?php echo $page->coverImage(); ?>" alt="<?php echo htmlspecialchars($page->title()); ?>" loading="lazy">
+									<img src="<?php echo $coverImage; ?>" alt="<?php echo htmlspecialchars($page->title()); ?>" loading="lazy">
 								</div>
 								<?php endif; ?>
 								<div class="carousel-content">
@@ -125,11 +136,22 @@ if (isset($categories) && is_object($categories)) {
 			<div class="bottom-posts mt-4">
 				<div class="row">
 					<?php foreach ($bottomPosts as $page): ?>
+					<?php
+						$coverVideo = method_exists($page, 'coverVideo') ? $page->coverVideo() : false;
+						$coverImage = $page->coverImage();
+					?>
 					<div class="col-md-3 col-sm-6 mb-3">
 						<a href="<?php echo $page->permalink(); ?>" class="bottom-post-card">
-							<?php if ($page->coverImage()): ?>
+							<?php if ($coverVideo): ?>
+							<div class="bottom-post-image video-thumb">
+								<video class="bottom-post-video" src="<?php echo $coverVideo; ?>" muted playsinline></video>
+								<div class="video-play-overlay">
+									<span class="video-play-icon">&#9658;</span>
+								</div>
+							</div>
+							<?php elseif ($coverImage): ?>
 							<div class="bottom-post-image">
-								<img src="<?php echo $page->coverImage(); ?>" alt="<?php echo htmlspecialchars($page->title()); ?>" loading="lazy">
+								<img src="<?php echo $coverImage; ?>" alt="<?php echo htmlspecialchars($page->title()); ?>" loading="lazy">
 							</div>
 							<?php endif; ?>
 							<div class="bottom-post-content">
@@ -161,5 +183,49 @@ if (!$hasContent): ?>
 		<?php include(THEME_DIR_PHP.'widget/ads-right.php'); ?>
 	</aside>
 </div>
+
+<script>
+// Play up to 2 seconds of cover videos when hovered on home page
+document.addEventListener('DOMContentLoaded', function() {
+	var videos = document.querySelectorAll('.carousel-video, .bottom-post-video');
+	videos.forEach(function(video) {
+		video.muted = true;
+		video.playsInline = true;
+		video.autoplay = false;
+
+		// Track whether we started playback from a hover
+		video.__hoverPlaying = false;
+
+		video.addEventListener('mouseenter', function() {
+			try {
+				video.currentTime = 0;
+				video.__hoverPlaying = true;
+				var playPromise = video.play();
+				if (playPromise !== undefined) {
+					playPromise.catch(function(){ /* ignore autoplay/interaction errors */ });
+				}
+			} catch(e) {}
+		});
+
+		video.addEventListener('mouseleave', function() {
+			video.__hoverPlaying = false;
+			try {
+				video.pause();
+				video.currentTime = 0;
+			} catch(e) {}
+		});
+
+		video.addEventListener('timeupdate', function() {
+			if (video.__hoverPlaying && video.currentTime >= 2) {
+				try {
+					video.pause();
+					video.currentTime = 0;
+					video.__hoverPlaying = false;
+				} catch(e) {}
+			}
+		});
+	});
+});
+</script>
 
 </main>

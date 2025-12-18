@@ -172,6 +172,14 @@ function setCoverImage(filename) {
 	var image = "<?php echo PAGE_IMAGES_URL; ?>"+filename;
 	$("#jscoverImage").val(filename);
 	$("#jscoverImagePreview").attr("src", image);
+
+	// Clear video to enforce exclusivity
+	if ($("#jscoverVideo").length) {
+		$("#jscoverVideo").val('');
+	}
+	if ($("#jscoverVideoPreview").length) {
+		$("#jscoverVideoPreview").attr('src', '').hide();
+	}
 }
 
 function uploadImages() {

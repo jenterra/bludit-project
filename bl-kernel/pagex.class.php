@@ -329,6 +329,8 @@ class Page {
 		$tmp['permalink'] 	= $this->permalink(true);
 		$tmp['coverImage'] 		= $this->coverImage(true);
 		$tmp['coverImageFilename'] 	= $this->coverImage(false);
+		$tmp['coverVideo'] 		= method_exists($this, 'coverVideo') ? $this->coverVideo(true) : false;
+		$tmp['coverVideoFilename'] 	= method_exists($this, 'coverVideo') ? $this->coverVideo(false) : false;
 
 		if ($returnsArray) {
 			return $tmp;
@@ -357,6 +359,28 @@ class Page {
 				return DOMAIN_UPLOADS_PAGES.$this->uuid().'/'.$filename;
 			}
 			return DOMAIN_UPLOADS.$filename;
+		}
+
+		return $filename;
+	}
+
+	// Returns the endpoint of the cover video, FALSE if the page doesn't have a cover video
+	// (boolean) $absolute, TRUE returns the complete URL, FALSE returns the filename
+	public function coverVideo($absolute=true)
+	{
+		$filename = $this->getValue('coverVideo');
+		if (empty($filename)) {
+			return false;
+		}
+
+		// Check is external video
+		if (filter_var($filename, FILTER_VALIDATE_URL)) {
+			return $filename;
+		}
+
+		if ($absolute) {
+			// Videos are stored under the general uploads/videos directory
+			return DOMAIN_UPLOADS.'videos/'.$filename;
 		}
 
 		return $filename;

@@ -13,6 +13,7 @@ class Pages extends dbJSON {
 		'dateModified'=>'',
 		'position'=>0,
 		'coverImage'=>'',
+		'coverVideo'=>'',
 		'category'=>array(),
 		'md5file'=>'',
 		'uuid'=>'',

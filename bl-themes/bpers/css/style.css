@@ -373,6 +373,63 @@
 	object-fit: cover;
 }
 
+/* Video previews should behave like images */
+.carousel-video,
+.bottom-post-video {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+/* Video thumbnail wrapper with play button overlay */
+.video-thumb {
+	position: relative;
+	overflow: hidden;
+}
+
+.video-play-overlay {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	font-size: 22px;
+	pointer-events: none;
+	transition: opacity 0.2s ease;
+}
+
+.video-play-icon {
+	display: inline-block;
+	margin-left: 2px; /* slightly center the triangle */
+}
+
+/* Hide play button when hovering the video thumbnail */
+.video-thumb:hover .video-play-overlay {
+	opacity: 0;
+}
+
+/* Full post video */
+.post-cover-video-wrapper {
+	margin-bottom: 1.5rem;
+}
+
+.post-cover-video {
+	width: 100%;
+	max-height: 540px;
+	object-fit: contain;
+	border-radius: 6px;
+	background: #000;
+	display: block;
+}
+
 .bottom-post-content {
 	padding: 16px;
 }

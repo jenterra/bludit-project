@@ -34,11 +34,22 @@ global $content;
 <div class="category-posts">
 	<div class="row">
 		<?php foreach ($content as $page): ?>
+		<?php
+			$coverVideo = method_exists($page, 'coverVideo') ? $page->coverVideo() : false;
+			$coverImage = $page->coverImage();
+		?>
 		<div class="col-md-6 col-lg-4 mb-4">
 			<a href="<?php echo $page->permalink(); ?>" class="category-post-card">
-				<?php if ($page->coverImage()): ?>
+				<?php if ($coverVideo): ?>
+				<div class="category-post-image video-thumb">
+					<video class="category-post-video" src="<?php echo $coverVideo; ?>" muted playsinline></video>
+					<div class="video-play-overlay">
+						<span class="video-play-icon">&#9658;</span>
+					</div>
+				</div>
+				<?php elseif ($coverImage): ?>
 				<div class="category-post-image">
-					<img src="<?php echo $page->coverImage(); ?>" alt="<?php echo htmlspecialchars($page->title()); ?>" loading="lazy">
+					<img src="<?php echo $coverImage; ?>" alt="<?php echo htmlspecialchars($page->title()); ?>" loading="lazy">
 				</div>
 				<?php endif; ?>
 				<div class="category-post-content">
