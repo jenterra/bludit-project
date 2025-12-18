@@ -13,7 +13,7 @@ class Pages extends dbJSON {
 		'dateModified'=>'',
 		'position'=>0,
 		'coverImage'=>'',
-		'category'=>'',
+		'category'=>array(),
 		'md5file'=>'',
 		'uuid'=>'',
 		'allowComments'=>true,
@@ -64,6 +64,21 @@ class Pages extends dbJSON {
 					$tags = $args['tags'];
 				}
 				$finalValue = $this->generateTags($tags);
+			} elseif ($field=='category') {
+				// Handle category as array (multiple categories)
+				if (isset($args['category'])) {
+					if (is_array($args['category'])) {
+						// Remove empty values and sanitize
+						$finalValue = array_filter(array_map('trim', $args['category']));
+						$finalValue = array_values($finalValue); // Re-index array
+					} else {
+						// Backward compatibility: single string category
+						$cat = trim($args['category']);
+						$finalValue = empty($cat) ? array() : array($cat);
+					}
+				} else {
+					$finalValue = array();
+				}
 			} elseif ($field=='custom') {
 				if (isset($args['custom'])) {
 					global $site;
@@ -182,6 +197,28 @@ class Pages extends dbJSON {
 		foreach ($this->dbFields as $field=>$value) {
 			if ( ($field=='tags') && isset($args['tags'])) {
 				$finalValue = $this->generateTags($args['tags']);
+			} elseif ($field=='category') {
+				// Handle category as array (multiple categories)
+				if (isset($args['category'])) {
+					if (is_array($args['category'])) {
+						// Remove empty values and sanitize
+						$finalValue = array_filter(array_map('trim', $args['category']));
+						$finalValue = array_values($finalValue); // Re-index array
+					} else {
+						// Backward compatibility: single string category
+						$cat = trim($args['category']);
+						$finalValue = empty($cat) ? array() : array($cat);
+					}
+				} else {
+					// Keep existing categories if not provided
+					$existingCategory = $this->db[$key][$field] ?? array();
+					// Backward compatibility: if it's a string, convert to array
+					if (is_string($existingCategory) && !empty($existingCategory)) {
+						$finalValue = array($existingCategory);
+					} else {
+						$finalValue = is_array($existingCategory) ? $existingCategory : array();
+					}
+				}
 			} elseif ($field=='custom') {
 				if (isset($args['custom'])) {
 					global $site;
@@ -787,8 +824,19 @@ class Pages extends dbJSON {
 	public function changeCategory($oldCategoryKey, $newCategoryKey)
 	{
 		foreach ($this->db as $key=>$value) {
-			if ($value['category']===$oldCategoryKey) {
-				$this->db[$key]['category'] = $newCategoryKey;
+			$category = $value['category'] ?? array();
+			// Backward compatibility: handle string category
+			if (is_string($category)) {
+				if ($category === $oldCategoryKey) {
+					$this->db[$key]['category'] = array($newCategoryKey);
+				}
+			} elseif (is_array($category)) {
+				// Replace old category key with new one in array
+				$keyIndex = array_search($oldCategoryKey, $category);
+				if ($keyIndex !== false) {
+					$category[$keyIndex] = $newCategoryKey;
+					$this->db[$key]['category'] = array_values($category); // Re-index
+				}
 			}
 		}
 		return $this->save();

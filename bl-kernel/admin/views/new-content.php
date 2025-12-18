@@ -83,14 +83,15 @@ echo Bootstrap::formOpen(array(
 	<div class="tab-content pr-3 pl-3 pb-3">
 		<div id="nav-general" class="tab-pane fade show active" role="tabpanel" aria-labelledby="general-tab">
 			<?php
-				// Category
+				// Category (multiple selection)
 				echo Bootstrap::formSelectBlock(array(
 					'name'=>'category',
-					'label'=>$L->g('Category'),
-					'selected'=>'',
+					'label'=>$L->g('Categories'),
+					'selected'=>array(),
 					'class'=>'',
-					'emptyOption'=>'- '.$L->g('Uncategorized').' -',
-					'options'=>$categories->getKeyNameArray()
+					'multiple'=>true,
+					'options'=>$categories->getKeyNameArray(),
+					'tip'=>$L->g('Select one or more categories')
 				));
 
 				// Description
@@ -185,6 +186,14 @@ echo Bootstrap::formOpen(array(
 
 			<script>
 			$(document).ready(function() {
+				// Initialize category multi-select
+				$("#jscategory").select2({
+					placeholder: "<?php echo $L->g('Select categories') ?>",
+					allowClear: true,
+					theme: "bootstrap4",
+					multiple: true
+				});
+
 				var parent = $("#jsparent").select2({
 					placeholder: "",
 					allowClear: true,

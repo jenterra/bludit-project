@@ -172,46 +172,89 @@ class Page {
 		return $pages->nextPageKey($this->key());
 	}
 
-	// Returns the category name
+	// Returns the category keys as array
+	public function categoriesKeys()
+	{
+		$category = $this->getValue('category');
+		// Backward compatibility: handle string category
+		if (is_string($category) && !empty($category)) {
+			return array($category);
+		}
+		return is_array($category) ? $category : array();
+	}
+
+	// Returns the first category key (for backward compatibility)
+	public function categoryKey()
+	{
+		$categories = $this->categoriesKeys();
+		return !empty($categories) ? $categories[0] : '';
+	}
+
+	// Returns the category name (first category, for backward compatibility)
 	public function category()
 	{
 		return $this->categoryMap('name');
 	}
 
-	// Returns the category template
+	// Returns all category names as array
+	public function categories()
+	{
+		global $categories;
+		$categoryKeys = $this->categoriesKeys();
+		$names = array();
+		foreach ($categoryKeys as $key) {
+			$map = $categories->getMap($key);
+			if (isset($map['name'])) {
+				$names[$key] = $map['name'];
+			}
+		}
+		return $names;
+	}
+
+	// Returns the category template (first category, for backward compatibility)
 	public function categoryTemplate()
 	{
 		return $this->categoryMap('template');
 	}
 
-	// Returns the category description
+	// Returns the category description (first category, for backward compatibility)
 	public function categoryDescription()
 	{
 		return $this->categoryMap('description');
 	}
 
-	// Returns the category key
-	public function categoryKey()
-	{
-		return $this->getValue('category');
-	}
-
-	// Returns the category permalink
+	// Returns the category permalink (first category, for backward compatibility)
 	public function categoryPermalink()
 	{
-		return DOMAIN_CATEGORIES.$this->categoryKey();
+		$categoryKey = $this->categoryKey();
+		return !empty($categoryKey) ? DOMAIN_CATEGORIES.$categoryKey : '';
+	}
+
+	// Returns all category permalinks as array
+	public function categoryPermalinks()
+	{
+		$categoryKeys = $this->categoriesKeys();
+		$permalinks = array();
+		foreach ($categoryKeys as $key) {
+			$permalinks[$key] = DOMAIN_CATEGORIES.$key;
+		}
+		return $permalinks;
 	}
 
 	// Returns the field from the array
 	// categoryMap = array( 'name'=>'', 'list'=>array() )
+	// Returns the field from the first category (for backward compatibility)
 	public function categoryMap($field)
 	{
 		global $categories;
 		$categoryKey = $this->categoryKey();
+		if (empty($categoryKey)) {
+			return false;
+		}
 		$map = $categories->getMap($categoryKey);
 
 		if ($field=='key') {
-			return $this->categoryKey();
+			return $categoryKey;
 		} elseif(isset($map[$field])) {
 			return $map[$field];
 		}
