@@ -24,15 +24,27 @@ class Categories extends dbList {
 		// Get pages database
 		$db = $pages->getDB(false);
 		foreach ($db as $pageKey=>$pageFields) {
-			if (!empty($pageFields['category'])) {
-				$categoryKey = $pageFields['category'];
+			$categories = $pageFields['category'] ?? array();
+			
+			// Backward compatibility: handle string category
+			if (is_string($categories) && !empty($categories)) {
+				$categories = array($categories);
+			} elseif (!is_array($categories)) {
+				$categories = array();
+			}
+			
+			// Add page to all its categories
+			foreach ($categories as $categoryKey) {
 				if (isset($this->db[$categoryKey]['list'])) {
 					if (
 						($db[$pageKey]['type']=='published') ||
 						($db[$pageKey]['type']=='sticky') ||
 						($db[$pageKey]['type']=='static')
 					) {
-						array_push($this->db[$categoryKey]['list'], $pageKey);
+						// Avoid duplicates
+						if (!in_array($pageKey, $this->db[$categoryKey]['list'])) {
+							array_push($this->db[$categoryKey]['list'], $pageKey);
+						}
 					}
 				}
 			}

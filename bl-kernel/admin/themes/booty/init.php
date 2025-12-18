@@ -364,12 +364,20 @@ EOF;
 			$html .= '<label class="mt-4 mb-2 pb-2 border-bottom text-uppercase w-100" for="'.$id.'">'.$args['label'].'</label>';
 		}
 
-		$html .= '<select id="'.$id.'" name="'.$args['name'].'" class="'.$class.'">';
-		if (!empty($args['emptyOption'])) {
+		$multiple = isset($args['multiple']) && $args['multiple'] ? 'multiple' : '';
+		$nameAttr = isset($args['multiple']) && $args['multiple'] ? $args['name'].'[]' : $args['name'];
+		
+		$html .= '<select id="'.$id.'" name="'.$nameAttr.'" class="'.$class.'" '.$multiple.'>';
+		if (!empty($args['emptyOption']) && !$multiple) {
 			$html .= '<option value="">'.$args['emptyOption'].'</option>';
 		}
+		
+		$selected = $args['selected'] ?? '';
+		$selectedArray = is_array($selected) ? $selected : (empty($selected) ? array() : array($selected));
+		
 		foreach ($args['options'] as $key=>$value) {
-			$html .= '<option '.(($key==$args['selected'])?'selected':'').' value="'.$key.'">'.$value.'</option>';
+			$isSelected = in_array($key, $selectedArray) ? 'selected' : '';
+			$html .= '<option '.$isSelected.' value="'.$key.'">'.$value.'</option>';
 		}
 		$html .= '</select>';
 		if (!empty($args['tip'])) {
