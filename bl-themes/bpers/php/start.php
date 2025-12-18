@@ -1,0 +1,9 @@
+<?php include(THEME_DIR_PHP.'widget/symbol.php'); ?>
+<?php include(THEME_DIR_PHP.'widget/nav.php'); ?>
+<?php Theme::plugins('siteBodyBegin'); ?>
+<?php include(THEME_DIR_PHP.'section/content.php'); ?>
+<?php Theme::plugins('pageEnd'); ?>
+<?php Theme::plugins('siteBodyEnd'); ?>
+<?php include(THEME_DIR_PHP.'section/footer.php'); ?>
+<?php echo Theme::js('js/bs.js');?>
+<?php echo Theme::jquery();?>
