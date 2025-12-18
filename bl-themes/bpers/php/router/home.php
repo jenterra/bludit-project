@@ -1,13 +1,13 @@
 <main class="container-fluid">
 <div class="row mt-1 mb-1">
-<div class="col-md-5 p-5 p-md-5">
+<!-- <div class="col-md-5 p-5 p-md-5">
 <h1 class="display-4"><strong><a href="<?php echo $site->url() ?>" class="link-body-emphasis"><?php echo $site->title() ?></a></strong></h1>
 <h2 class="lead mt-3"><?php echo $site->description() ?></h2>
 <p class="lead mt-3"><?php echo $site->slogan() ?></p>
-</div>
-<div class="col-lg-7 p-0">
+</div> -->
+<!-- <div class="col-lg-7 p-0">
 <img class="img-fluid" width="100%" height="100%" alt="<?php echo $site->title() ?>" src="<?php echo $site->logo() ?>"/>
-</div>
+</div> -->
 </div>
 <?php if (empty($content)) : ?>
 <div class="mt-4 p-3 text-center display-4"><?php $language->p('No pages found') ?></div>
