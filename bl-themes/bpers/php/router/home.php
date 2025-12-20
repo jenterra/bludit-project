@@ -82,7 +82,12 @@ if (!empty($latestPosts)):
 					</div>
 					<?php endif; ?>
 					<div class="latest-post-content">
-						<h4 class="latest-post-title"><?php echo $page->title(); ?></h4>
+						<div class="post-title-wrapper">
+							<h4 class="latest-post-title"><?php echo $page->title(); ?></h4>
+							<?php if ($page->subtitle()): ?>
+							<p class="latest-post-subtitle"><?php echo $page->subtitle(); ?></p>
+							<?php endif; ?>
+						</div>
 						<?php if ($page->description()): ?>
 						<p class="latest-post-description"><?php echo $page->description(); ?></p>
 						<?php endif; ?>
@@ -219,7 +224,12 @@ if (isset($categories) && is_object($categories)) {
 								</div>
 								<?php endif; ?>
 								<div class="carousel-content">
-									<h4 class="carousel-title"><?php echo $page->title(); ?></h4>
+									<div class="post-title-wrapper">
+										<h4 class="carousel-title"><?php echo $page->title(); ?></h4>
+										<?php if ($page->subtitle()): ?>
+										<p class="carousel-subtitle"><?php echo $page->subtitle(); ?></p>
+										<?php endif; ?>
+									</div>
 									<?php if ($page->description()): ?>
 									<p class="carousel-description"><?php echo $page->description(); ?></p>
 									<?php endif; ?>
@@ -270,7 +280,12 @@ if (isset($categories) && is_object($categories)) {
 							</div>
 							<?php endif; ?>
 							<div class="bottom-post-content">
-								<h5 class="bottom-post-title"><?php echo $page->title(); ?></h5>
+								<div class="post-title-wrapper">
+									<h5 class="bottom-post-title"><?php echo $page->title(); ?></h5>
+									<?php if ($page->subtitle()): ?>
+									<p class="bottom-post-subtitle"><?php echo $page->subtitle(); ?></p>
+									<?php endif; ?>
+								</div>
 								<small class="bottom-post-meta"><?php echo $page->date(); ?></small>
 							</div>
 						</a>

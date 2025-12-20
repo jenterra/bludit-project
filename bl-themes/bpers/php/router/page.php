@@ -19,7 +19,12 @@
 <img class="img-fluid" width="100%" height="100%" alt="<?php echo $page->description(); ?>" src="<?php echo $coverImage; ?>"/>
 <?php endif ?>
 <article class="p-3">
-<h1 class="display-4"><a class="link-body-emphasis" href="<?php echo $page->permalink(); ?>"><?php echo $page->title(); ?></a></h1>
+<div class="post-title-wrapper">
+	<h1 class="display-4 post-title"><a class="link-body-emphasis" href="<?php echo $page->permalink(); ?>"><?php echo $page->title(); ?></a></h1>
+	<?php if ($page->subtitle()): ?>
+	<h2 class="post-subtitle"><?php echo $page->subtitle(); ?></h2>
+	<?php endif; ?>
+</div>
 <h2 class="lead"><?php echo $page->description(); ?></h2>
 <?php if (!$page->isStatic() && !$url->notFound()): ?>
 <h6 class="card-subtitle mb-3 text-muted"><?php echo $page->date(); ?> - <?php echo $L->get('Reading time') . ': ' . $page->readingTime() ?></h6>

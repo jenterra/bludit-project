@@ -53,7 +53,12 @@ global $content;
 				</div>
 				<?php endif; ?>
 				<div class="category-post-content">
-					<h3 class="category-post-title"><?php echo $page->title(); ?></h3>
+					<div class="post-title-wrapper">
+						<h3 class="category-post-title"><?php echo $page->title(); ?></h3>
+						<?php if ($page->subtitle()): ?>
+						<p class="category-post-subtitle"><?php echo $page->subtitle(); ?></p>
+						<?php endif; ?>
+					</div>
 					<?php if ($page->description()): ?>
 					<p class="category-post-description"><?php echo $page->description(); ?></p>
 					<?php endif; ?>

@@ -288,6 +288,12 @@ class Page {
 		return $this->getValue('description');
 	}
 
+	// Returns the subtitle
+	public function subtitle()
+	{
+		return $this->getValue('subtitle');
+	}
+
 	// Returns the tags separated by comma
 	// (boolean) $returnsArray, TRUE to get the tags as an array, FALSE to get the tags separated by comma
 	// The tags in array format returns array( tagKey => tagName )

@@ -431,6 +431,11 @@ echo Bootstrap::formOpen(array(
 	<input id="jstitle" name="title" type="text" class="form-control form-control-lg rounded-0" value="" placeholder="<?php $L->p('Enter title') ?>">
 </div>
 
+<!-- Subtitle -->
+<div id="jseditorSubtitle" class="form-group mb-1">
+	<input id="jssubtitle" name="subtitle" type="text" class="form-control rounded-0" value="" placeholder="<?php $L->p('Enter subtitle (optional)') ?>">
+</div>
+
 <!-- Editor -->
 <textarea id="jseditor" class="editable h-100 mb-1"></textarea>
 
