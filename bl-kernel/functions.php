@@ -760,7 +760,17 @@ function createCategory($args)
     return false;
   }
 
-  if ($categories->add(array('name' => $args['name'], 'description' => $args['description']))) {
+  $categoryData = array(
+    'name' => $args['name'],
+    'description' => $args['description']
+  );
+  
+  // Add parent category if provided
+  if (isset($args['parent']) && !empty($args['parent'])) {
+    $categoryData['parent'] = $args['parent'];
+  }
+  
+  if ($categories->add($categoryData)) {
     // Add to syslog
     $syslog->add(array(
       'dictionaryKey' => 'new-category-created',
@@ -787,6 +797,11 @@ function editCategory($args)
     return false;
   }
 
+  // Ensure parent is set in args (default to empty if not provided)
+  if (!isset($args['parent'])) {
+    $args['parent'] = '';
+  }
+  
   $newCategoryKey = $categories->edit($args);
 
   if ($newCategoryKey == false) {

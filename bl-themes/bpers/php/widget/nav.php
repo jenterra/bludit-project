@@ -35,17 +35,49 @@
 				<!-- Categories -->
 				<?php 
 				global $categories;
-				// Use sorted categories if available
-				$categoryKeys = method_exists($categories, 'keysSortedByPosition') ? $categories->keysSortedByPosition() : $categories->keys();
-				foreach ($categoryKeys as $categoryKey): 
+				// Get only parent categories - sorted by position if available
+				$parentCategoryKeys = $categories->getParentCategoryKeys();
+				
+				// Sort by position if method exists
+				if (method_exists($categories, 'keysSortedByPosition')) {
+					$sortedParentKeys = array();
+					$allSortedKeys = $categories->keysSortedByPosition();
+					foreach ($allSortedKeys as $key) {
+						if (in_array($key, $parentCategoryKeys)) {
+							$sortedParentKeys[] = $key;
+						}
+					}
+					$parentCategoryKeys = $sortedParentKeys;
+				}
+				
+				foreach ($parentCategoryKeys as $categoryKey): 
 					$categoryName = $categories->getName($categoryKey);
 					$categoryUrl = DOMAIN_CATEGORIES . $categoryKey;
 					$isActive = ($url->whereAmI()=='category' && $url->slug()==$categoryKey);
+					
+					// Check if this category has sub-categories
+					$subCategoryKeys = $categories->getSubCategoryKeys($categoryKey);
+					$hasSubCategories = !empty($subCategoryKeys);
 				?>
-				<li class="nav-item">
-					<a class="nav-link <?php echo $isActive ? 'active' : '' ?>" href="<?php echo $categoryUrl ?>">
+				<li class="nav-item <?php echo $hasSubCategories ? 'dropdown' : '' ?>">
+					<a class="nav-link <?php echo $isActive ? 'active' : '' ?> <?php echo $hasSubCategories ? 'dropdown-toggle' : '' ?>" 
+					   href="<?php echo $categoryUrl ?>" 
+					   <?php if ($hasSubCategories): ?>id="dropdown-<?php echo $categoryKey ?>" data-bs-toggle="dropdown" aria-expanded="false"<?php endif; ?>>
 						<?php echo $categoryName ?>
 					</a>
+					<?php if ($hasSubCategories): ?>
+					<ul class="dropdown-menu" aria-labelledby="dropdown-<?php echo $categoryKey ?>">
+						<li><a class="dropdown-item <?php echo $isActive ? 'active' : '' ?>" href="<?php echo $categoryUrl ?>"><?php echo $categoryName ?> (All)</a></li>
+						<li><hr class="dropdown-divider"></li>
+						<?php foreach ($subCategoryKeys as $subKey): 
+							$subCategoryName = $categories->getName($subKey);
+							$subCategoryUrl = DOMAIN_CATEGORIES . $subKey;
+							$isSubActive = ($url->whereAmI()=='category' && $url->slug()==$subKey);
+						?>
+						<li><a class="dropdown-item <?php echo $isSubActive ? 'active' : '' ?>" href="<?php echo $subCategoryUrl ?>"><?php echo $subCategoryName ?></a></li>
+						<?php endforeach; ?>
+					</ul>
+					<?php endif; ?>
 				</li>
 				<?php endforeach; ?>
 			</ul>

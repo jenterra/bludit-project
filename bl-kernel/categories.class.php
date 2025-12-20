@@ -9,6 +9,23 @@ class Categories extends dbList {
 
 	function numberOfPages($key)
 	{
+		// If this is a parent category, count pages from parent and all sub-categories
+		if ($this->hasSubCategories($key)) {
+			$allCategoryKeys = $this->getAllCategoryKeysForParent($key);
+			$allPageKeys = array();
+			
+			foreach ($allCategoryKeys as $catKey) {
+				if (isset($this->db[$catKey]['list']) && is_array($this->db[$catKey]['list'])) {
+					$allPageKeys = array_merge($allPageKeys, $this->db[$catKey]['list']);
+				}
+			}
+			
+			// Remove duplicates and return count
+			$allPageKeys = array_unique($allPageKeys);
+			return count($allPageKeys);
+		}
+		
+		// Otherwise, return normal count for the category itself
 		return $this->countItems($key);
 	}
 
@@ -87,6 +104,7 @@ class Categories extends dbList {
 		$this->db[$key]['description'] = isset($args['description'])?Sanitize::removeTags($args['description']):'';
 		$this->db[$key]['list'] = isset($args['list'])?$args['list']:array();
 		$this->db[$key]['position'] = isset($args['position'])?(int)$args['position']:0;
+		$this->db[$key]['parent'] = isset($args['parent']) && !empty($args['parent']) ? Sanitize::html($args['parent']) : '';
 
 		$this->save();
 		return $key;
@@ -108,6 +126,7 @@ class Categories extends dbList {
 		$this->db[$args['newKey']]['description'] = isset($args['description'])?Sanitize::removeTags($args['description']):'';
 		$this->db[$args['newKey']]['list'] = $this->db[$args['oldKey']]['list'];
 		$this->db[$args['newKey']]['position'] = isset($args['position'])?(int)$args['position']:$oldPosition;
+		$this->db[$args['newKey']]['parent'] = isset($args['parent']) && !empty($args['parent']) ? Sanitize::html($args['parent']) : '';
 
 		// Remove the old category
 		if ($args['oldKey'] !== $args['newKey']) {
@@ -128,5 +147,192 @@ class Categories extends dbList {
 			}
 		}
 		return $this->save();
+	}
+
+	// Get only parent categories (categories without a parent)
+	public function getParentCategories()
+	{
+		$parentCategories = array();
+		foreach ($this->db as $key => $fields) {
+			$parent = isset($fields['parent']) ? $fields['parent'] : '';
+			if (empty($parent)) {
+				$parentCategories[$key] = $fields;
+			}
+		}
+		return $parentCategories;
+	}
+
+	// Get keys of parent categories only
+	public function getParentCategoryKeys()
+	{
+		$parentKeys = array();
+		foreach ($this->db as $key => $fields) {
+			$parent = isset($fields['parent']) ? $fields['parent'] : '';
+			if (empty($parent)) {
+				$parentKeys[] = $key;
+			}
+		}
+		return $parentKeys;
+	}
+
+	// Get sub-categories (categories that have a parent)
+	public function getSubCategories($parentKey = null)
+	{
+		$subCategories = array();
+		foreach ($this->db as $key => $fields) {
+			$parent = isset($fields['parent']) ? $fields['parent'] : '';
+			if (!empty($parent)) {
+				if ($parentKey === null || $parent === $parentKey) {
+					$subCategories[$key] = $fields;
+				}
+			}
+		}
+		return $subCategories;
+	}
+
+	// Get keys of sub-categories for a specific parent
+	public function getSubCategoryKeys($parentKey)
+	{
+		$subKeys = array();
+		foreach ($this->db as $key => $fields) {
+			$parent = isset($fields['parent']) ? $fields['parent'] : '';
+			if ($parent === $parentKey) {
+				$subKeys[] = $key;
+			}
+		}
+		return $subKeys;
+	}
+
+	// Get all category keys including parent and sub-categories for a parent category
+	public function getAllCategoryKeysForParent($parentKey)
+	{
+		$allKeys = array($parentKey);
+		$subKeys = $this->getSubCategoryKeys($parentKey);
+		return array_merge($allKeys, $subKeys);
+	}
+
+	// Get key-name array for parent categories only
+	public function getParentCategoryKeyNameArray()
+	{
+		$tmp = array();
+		foreach ($this->db as $key => $fields) {
+			$parent = isset($fields['parent']) ? $fields['parent'] : '';
+			if (empty($parent)) {
+				$tmp[$key] = $fields['name'];
+			}
+		}
+		return $tmp;
+	}
+
+	// Get key-name array for sub-categories only
+	public function getSubCategoryKeyNameArray($parentKey = null)
+	{
+		$tmp = array();
+		foreach ($this->db as $key => $fields) {
+			$parent = isset($fields['parent']) ? $fields['parent'] : '';
+			if (!empty($parent)) {
+				if ($parentKey === null || $parent === $parentKey) {
+					$tmp[$key] = $fields['name'];
+				}
+			}
+		}
+		return $tmp;
+	}
+
+	// Get key-name array for parent categories that don't have sub-categories
+	public function getParentCategoriesWithoutChildrenKeyNameArray()
+	{
+		$tmp = array();
+		foreach ($this->db as $key => $fields) {
+			$parent = isset($fields['parent']) ? $fields['parent'] : '';
+			// If it's a parent category (no parent) and has no sub-categories
+			if (empty($parent) && !$this->hasSubCategories($key)) {
+				$tmp[$key] = $fields['name'];
+			}
+		}
+		return $tmp;
+	}
+
+	// Get key-name array for categories that should be selectable in post edit (sub-categories + parent categories without children)
+	public function getSelectableCategoriesKeyNameArray()
+	{
+		$selectable = array();
+		
+		// Add all sub-categories
+		$subCategories = $this->getSubCategoryKeyNameArray();
+		$selectable = array_merge($selectable, $subCategories);
+		
+		// Add parent categories that don't have sub-categories
+		$parentWithoutChildren = $this->getParentCategoriesWithoutChildrenKeyNameArray();
+		$selectable = array_merge($selectable, $parentWithoutChildren);
+		
+		return $selectable;
+	}
+
+	// Check if a category has sub-categories
+	public function hasSubCategories($parentKey)
+	{
+		foreach ($this->db as $key => $fields) {
+			$parent = isset($fields['parent']) ? $fields['parent'] : '';
+			if ($parent === $parentKey) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Override getList to include sub-categories when viewing a parent category, sorted by creation date
+	public function getList($key, $pageNumber, $numberOfItems)
+	{
+		// Check if this category has sub-categories
+		if ($this->hasSubCategories($key)) {
+			// Get all category keys (parent + sub-categories)
+			$allCategoryKeys = $this->getAllCategoryKeysForParent($key);
+			$allPageKeys = array();
+			
+			// Collect all page keys from parent and sub-categories
+			foreach ($allCategoryKeys as $catKey) {
+				if (isset($this->db[$catKey]['list']) && is_array($this->db[$catKey]['list'])) {
+					$allPageKeys = array_merge($allPageKeys, $this->db[$catKey]['list']);
+				}
+			}
+			
+			// Remove duplicates
+			$allPageKeys = array_unique($allPageKeys);
+			
+			// Sort by creation date (get dates from pages database)
+			global $pages;
+			$pagesWithDates = array();
+			foreach ($allPageKeys as $pageKey) {
+				if ($pages->exists($pageKey)) {
+					$pageDB = $pages->getPageDB($pageKey);
+					if ($pageDB && isset($pageDB['date'])) {
+						$pagesWithDates[$pageKey] = $pageDB['date'];
+					}
+				}
+			}
+			
+			// Sort by date (newest first - HighToLow)
+			arsort($pagesWithDates);
+			$allPageKeys = array_keys($pagesWithDates);
+			
+			// Return all items if numberOfItems is -1
+			if ($numberOfItems == -1) {
+				return $allPageKeys;
+			}
+			
+			// Paginate the results
+			$realPageNumber = $pageNumber - 1;
+			$chunks = array_chunk($allPageKeys, $numberOfItems);
+			if (isset($chunks[$realPageNumber])) {
+				return $chunks[$realPageNumber];
+			}
+			
+			// Out of index, return FALSE
+			return false;
+		}
+		
+		// No sub-categories, use parent's getList method (shows only posts from this category)
+		return parent::getList($key, $pageNumber, $numberOfItems);
 	}
 }

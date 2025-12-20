@@ -20,20 +20,74 @@ echo '
 		<tr>
 			<th class="border-bottom-0" scope="col">'.$L->g('Name').'</th>
 			<th class="border-bottom-0" scope="col">'.$L->g('URL').'</th>
+			<th class="border-bottom-0" scope="col">'.$L->g('Posts').'</th>
 		</tr>
 	</thead>
 	<tbody>
 ';
 
-// Use sorted categories if available, otherwise use default order
-$categoryKeys = method_exists($categories, 'keysSortedByPosition') ? $categories->keysSortedByPosition() : $categories->keys();
+// Get parent categories first, sorted by position
+$parentCategoryKeys = $categories->getParentCategoryKeys();
 
-foreach ($categoryKeys as $key) {
-	$category = new Category($key);
+// Sort parent categories by position if available
+if (method_exists($categories, 'keysSortedByPosition')) {
+	$sortedParentKeys = array();
+	$allSortedKeys = $categories->keysSortedByPosition();
+	foreach ($allSortedKeys as $key) {
+		if (in_array($key, $parentCategoryKeys)) {
+			$sortedParentKeys[] = $key;
+		}
+	}
+	$parentCategoryKeys = $sortedParentKeys;
+}
+
+// Display tree structure: parent categories with their sub-categories
+foreach ($parentCategoryKeys as $parentKey) {
+	$parentCategory = new Category($parentKey);
+	$postCount = $categories->numberOfPages($parentKey);
+	
+	// Display parent category
 	echo '<tr>';
-	echo '<td><a href="'.HTML_PATH_ADMIN_ROOT.'edit-category/'.$key.'">'.$category->name().'</a></td>';
-	echo '<td><a href="'.$category->permalink().'">'.$url->filters('category', false).$key.'</a></td>';
+	echo '<td>';
+	echo '<a href="'.HTML_PATH_ADMIN_ROOT.'edit-category/'.$parentKey.'" style="font-weight: bold;">';
+	echo '<i class="fa fa-folder"></i> '.$parentCategory->name();
+	echo '</a>';
+	echo '</td>';
+	echo '<td><a href="'.$parentCategory->permalink().'" target="_blank">'.$url->filters('category', false).$parentKey.'</a></td>';
+	echo '<td>'.$postCount.'</td>';
 	echo '</tr>';
+	
+	// Get and display sub-categories for this parent
+	$subCategoryKeys = $categories->getSubCategoryKeys($parentKey);
+	
+	// Sort sub-categories by position if available
+	if (method_exists($categories, 'keysSortedByPosition') && !empty($subCategoryKeys)) {
+		$sortedSubKeys = array();
+		$allSortedKeys = $categories->keysSortedByPosition();
+		foreach ($allSortedKeys as $key) {
+			if (in_array($key, $subCategoryKeys)) {
+				$sortedSubKeys[] = $key;
+			}
+		}
+		$subCategoryKeys = $sortedSubKeys;
+	}
+	
+	// Display sub-categories with indentation
+	foreach ($subCategoryKeys as $subKey) {
+		$subCategory = new Category($subKey);
+		$subPostCount = $categories->countItems($subKey);
+		
+		echo '<tr>';
+		echo '<td>';
+		echo '<a href="'.HTML_PATH_ADMIN_ROOT.'edit-category/'.$subKey.'" style="padding-left: 30px; color: #6c757d;">';
+		echo '<i class="fa fa-folder-open" style="font-size: 0.9em;"></i> ';
+		echo $subCategory->name();
+		echo '</a>';
+		echo '</td>';
+		echo '<td><a href="'.$subCategory->permalink().'" target="_blank">'.$url->filters('category', false).$subKey.'</a></td>';
+		echo '<td>'.$subPostCount.'</td>';
+		echo '</tr>';
+	}
 }
 
 echo '

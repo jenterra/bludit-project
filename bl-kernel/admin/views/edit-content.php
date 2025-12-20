@@ -100,16 +100,25 @@ echo Bootstrap::formOpen(array(
 	<div class="tab-content pr-3 pl-3 pb-3">
 		<div id="nav-general" class="tab-pane fade show active" role="tabpanel" aria-labelledby="general-tab">
 			<?php
-				// Category (multiple selection)
+				// Category selection - show sub-categories + parent categories without sub-categories
 				$selectedCategories = $page->categoriesKeys();
+				$categoryOptions = $categories->getSelectableCategoriesKeyNameArray();
+				
+				// If no selectable categories, show all categories as fallback
+				if (empty($categoryOptions)) {
+					$categoryOptions = $categories->getKeyNameArray();
+				}
+				
+				$categoryTip = $L->g('Select one or more categories');
+				
 				echo Bootstrap::formSelectBlock(array(
 					'name'=>'category',
 					'label'=>$L->g('Categories'),
 					'selected'=>$selectedCategories,
 					'class'=>'',
 					'multiple'=>true,
-					'options'=>$categories->getKeyNameArray(),
-					'tip'=>$L->g('Select one or more categories')
+					'options'=>$categoryOptions,
+					'tip'=>$categoryTip
 				));
 
 				// Description

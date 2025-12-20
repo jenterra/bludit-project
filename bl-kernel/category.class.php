@@ -14,6 +14,7 @@ class Category {
 			$this->vars['key'] 		= $key;
 			$this->vars['permalink'] 	= DOMAIN_CATEGORIES . $key;
 			$this->vars['list'] 		= $categories->db[$key]['list'];
+			$this->vars['parent'] 		= isset($categories->db[$key]['parent']) ? $categories->db[$key]['parent'] : '';
 		} else {
 			$errorMessage = 'Category not found in database by key ['.$key.']';
 			Log::set(__METHOD__.LOG_SEP.$errorMessage);
@@ -58,6 +59,19 @@ class Category {
 	public function pages()
 	{
 		return $this->getValue('list');
+	}
+
+	// Returns the parent category key
+	public function parent()
+	{
+		return $this->getValue('parent');
+	}
+
+	// Check if this category has a parent
+	public function hasParent()
+	{
+		$parent = $this->parent();
+		return !empty($parent);
 	}
 
 	// Returns an array in json format with all the data of the tag

@@ -17,7 +17,7 @@ $category = new Category($categoryKey);
 $categoryName = $category->name();
 $categoryDescription = $category->description();
 
-// Get posts from $content array (already paginated by Bludit)
+// Get posts from $content array (already paginated by Bludit, sorted by creation date)
 global $content;
 ?>
 

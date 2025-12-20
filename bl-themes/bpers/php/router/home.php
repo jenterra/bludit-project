@@ -16,39 +16,68 @@ $hasContent = false;
 
 // Check if categories object exists and has data
 if (isset($categories) && is_object($categories)) {
-	// Get all category keys dynamically - sorted by position if available
-	$categoryKeys = method_exists($categories, 'keysSortedByPosition') ? $categories->keysSortedByPosition() : $categories->keys();
+	// Get only parent category keys - sorted by position if available
+	$parentCategoryKeys = $categories->getParentCategoryKeys();
 	
-	if (!empty($categoryKeys)) {
-		foreach ($categoryKeys as $categoryKey): 
+	// Sort by position if keysSortedByPosition method exists
+	if (method_exists($categories, 'keysSortedByPosition')) {
+		$sortedParentKeys = array();
+		$allSortedKeys = $categories->keysSortedByPosition();
+		foreach ($allSortedKeys as $key) {
+			if (in_array($key, $parentCategoryKeys)) {
+				$sortedParentKeys[] = $key;
+			}
+		}
+		$parentCategoryKeys = $sortedParentKeys;
+	}
+	
+	if (!empty($parentCategoryKeys)) {
+		foreach ($parentCategoryKeys as $categoryKey): 
 			if (!isset($categories->db[$categoryKey])) continue;
 			
 			$categoryName = $categories->getName($categoryKey);
 			$categoryUrl = DOMAIN_CATEGORIES . $categoryKey;
 			
-			// Get posts directly from category database list
-			if (!isset($categories->db[$categoryKey]['list']) || !is_array($categories->db[$categoryKey]['list'])) {
-				continue;
+			// Get posts from parent category and all its sub-categories
+			$allCategoryKeys = $categories->getAllCategoryKeysForParent($categoryKey);
+			$allCategoryPosts = array();
+			
+			// Collect posts from parent and all sub-categories
+			foreach ($allCategoryKeys as $catKey) {
+				if (isset($categories->db[$catKey]['list']) && is_array($categories->db[$catKey]['list'])) {
+					$allCategoryPosts = array_merge($allCategoryPosts, $categories->db[$catKey]['list']);
+				}
 			}
 			
-			$allCategoryPosts = $categories->db[$categoryKey]['list'];
+			// Remove duplicates
+			$allCategoryPosts = array_unique($allCategoryPosts);
 			
 			if (empty($allCategoryPosts)) continue;
 			
+			// Sort posts by creation date (newest first)
+			global $pages;
+			$postsWithDates = array();
+			foreach ($allCategoryPosts as $pageKey) {
+				if ($pages->exists($pageKey)) {
+					$pageDB = $pages->getPageDB($pageKey);
+					if ($pageDB && isset($pageDB['date'])) {
+						$postsWithDates[$pageKey] = $pageDB['date'];
+					}
+				}
+			}
+			
+			// Sort by date (newest first - HighToLow)
+			arsort($postsWithDates);
+			$sortedPostKeys = array_keys($postsWithDates);
+			
 			// Limit to 12 posts maximum
-			$categoryPosts = array_slice($allCategoryPosts, 0, 12);
+			$categoryPosts = array_slice($sortedPostKeys, 0, 12);
 			
 			if (empty($categoryPosts)) continue;
 			
 			// Convert page keys to Page objects
-			global $pages;
 			$pageObjects = array();
 			foreach ($categoryPosts as $pageKey) {
-				// Check if page exists before creating Page object
-				if (!$pages->exists($pageKey)) {
-					continue;
-				}
-				
 				try {
 					$page = new Page($pageKey);
 					// Verify page object was created successfully

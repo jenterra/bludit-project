@@ -37,6 +37,27 @@
 		'tip'=>''
 	));
 
+	// Parent category selection
+	$parentOptions = array('' => $L->g('None (Parent Category)'));
+	$currentParent = isset($categoryMap['parent']) ? $categoryMap['parent'] : '';
+	
+	// Get parent categories, excluding current category to prevent self-reference
+	$parentCategories = $categories->getParentCategoryKeyNameArray();
+	foreach ($parentCategories as $key => $name) {
+		if ($key !== $categoryMap['key']) {
+			$parentOptions[$key] = $name;
+		}
+	}
+	
+	echo Bootstrap::formSelect(array(
+		'name'=>'parent',
+		'label'=>$L->g('Parent Category'),
+		'options'=>$parentOptions,
+		'selected'=>$currentParent,
+		'class'=>'',
+		'tip'=>$L->g('Select a parent category if this is a sub-category')
+	));
+
 	echo Bootstrap::formTextarea(array(
 		'name'=>'description',
 		'label'=>$L->g('Description'),

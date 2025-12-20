@@ -25,6 +25,19 @@
 		'tip'=>''
 	));
 
+	// Parent category selection
+	$parentOptions = array('' => $L->g('None (Parent Category)'));
+	$parentOptions = array_merge($parentOptions, $categories->getParentCategoryKeyNameArray());
+	
+	echo Bootstrap::formSelect(array(
+		'name'=>'parent',
+		'label'=>$L->g('Parent Category'),
+		'options'=>$parentOptions,
+		'selected'=>isset($_POST['parent'])?$_POST['parent']:'',
+		'class'=>'',
+		'tip'=>$L->g('Select a parent category if this is a sub-category')
+	));
+
 	echo Bootstrap::formTextarea(array(
 		'name'=>'description',
 		'label'=>$L->g('Description'),
