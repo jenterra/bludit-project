@@ -48,6 +48,9 @@
 		<a class="nav-link" href="<?php echo HTML_PATH_ADMIN_ROOT.'ads' ?>"><span class="fa fa-bullhorn"></span><?php $L->p('Ads Management') ?></a>
 	</li>
 	<li class="nav-item">
+		<a class="nav-link" href="<?php echo HTML_PATH_ADMIN_ROOT.'weather' ?>"><span class="fa fa-cloud"></span><?php $L->p('Weather Management') ?></a>
+	</li>
+	<li class="nav-item">
 		<a class="nav-link" href="<?php echo HTML_PATH_ADMIN_ROOT.'plugins' ?>"><span class="fa fa-puzzle-piece"></span><?php $L->p('Plugins') ?></a>
 	</li>
 	<li class="nav-item">

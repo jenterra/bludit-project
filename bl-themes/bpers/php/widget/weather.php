@@ -11,13 +11,26 @@
 				const weatherContainer = document.getElementById('weather-data');
 				if (!weatherContainer) return;
 				
-				// Configuration - Set your location here
-				// Option 1: City name (will be geocoded automatically)
-				const CITY_NAME = 'London'; // Change to your city name
+				// Load weather configuration from database
+				<?php
+				$weatherDB = new dbJSON(PATH_DATABASES . 'weather.php');
+				$cityName = isset($weatherDB->db['cityName']) ? $weatherDB->db['cityName'] : 'London';
+				$latitude = isset($weatherDB->db['latitude']) ? $weatherDB->db['latitude'] : null;
+				$longitude = isset($weatherDB->db['longitude']) ? $weatherDB->db['longitude'] : null;
 				
-				// Option 2: Coordinates directly (latitude, longitude) - Recommended!
-				// If coordinates are provided, CITY_NAME will be ignored
-				const COORDINATES = null; // Example: [51.5074, -0.1278] for London, [40.7128, -74.0060] for New York
+				// Prepare coordinates array
+				$coordinates = null;
+				if ($latitude !== null && $longitude !== null) {
+					$coordinates = array((float)$latitude, (float)$longitude);
+				}
+				?>
+				
+				// Configuration - Loaded from database
+				// Option 1: City name (will be geocoded automatically)
+				const CITY_NAME = <?php echo json_encode($cityName); ?>;
+				
+				// Option 2: Coordinates directly (latitude, longitude) - If provided, CITY_NAME will be ignored
+				const COORDINATES = <?php echo $coordinates !== null ? json_encode($coordinates) : 'null'; ?>;
 				
 				// Function to get weather description from weather code
 				function getWeatherDescription(code) {
