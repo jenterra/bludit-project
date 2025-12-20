@@ -1,2 +1,2 @@
 <?php defined('BLUDIT') or die('Bludit CMS.'); ?>
-{"leftSidebarImage":"ad-left-1766224139.jpg","leftSidebarUrl":"https:\/\/example.com","leftSidebarActive":true,"rightSidebarImage":"ad-right-1766224184.jpg","rightSidebarUrl":"https:\/\/example.com","rightSidebarActive":true}
+{"leftSidebarImage":"ad-left-1766224139.jpg","leftSidebarUrl":"https:\/\/example.com","leftSidebarActive":true,"rightSidebarImage":"ad-right-1766224184.jpg","rightSidebarUrl":"","rightSidebarActive":true}

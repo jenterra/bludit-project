@@ -11,8 +11,9 @@
 			<div class="col text-center">
 				<a href="<?php echo Theme::siteUrl() ?>" class="header-logo"><?php echo $site->title() ?></a>
 			</div>
-			<!-- Right: IMPRINT and CONTACT -->
-			<div class="col-auto">
+			<!-- Right: Language Switcher, IMPRINT and CONTACT -->
+			<div class="col-auto d-flex align-items-center">
+				<?php include(THEME_DIR_PHP.'widget/gtranslate.php'); ?>
 				<a href="#" class="header-link me-3">IMPRINT</a>
 				<a href="#" class="header-link">CONTACT</a>
 			</div>

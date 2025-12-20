@@ -48,6 +48,23 @@
 	text-decoration: none;
 }
 
+/* Gtranslate Widget Styling */
+.gtranslate_wrapper {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	z-index: 1000;
+	background: #fff;
+	padding: 10px;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Gtranslate widget customization */
+.gtranslate_wrapper * {
+	vertical-align: middle;
+}
+
 /* Bottom Navigation Section */
 .navbar-nav-bottom {
 	background-color: #e8e8e8;
