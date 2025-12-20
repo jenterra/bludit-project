@@ -316,23 +316,35 @@ class Site extends dbJSON
 	// For example, http://www.domain.com
 	public function domain()
 	{
-		// If the URL field is not set, try detect the domain.
-		if (Text::isEmpty($this->url())) {
-			if (!empty($_SERVER['HTTPS'])) {
-				$protocol = 'https://';
-			} else {
-				$protocol = 'http://';
-			}
-
-			$domain = trim($_SERVER['HTTP_HOST'], '/');
-			return $protocol . $domain;
+		// Auto-detect from server if URL field is empty or invalid
+		$urlField = $this->url();
+		
+		// Determine protocol from server
+		$isHTTPS = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
+		           (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ||
+		           (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+		$protocol = $isHTTPS ? 'https://' : 'http://';
+		
+		// Get domain from server
+		$serverDomain = !empty($_SERVER['HTTP_HOST']) ? trim($_SERVER['HTTP_HOST'], '/') : '';
+		
+		// If URL field is not set or empty, use auto-detection
+		if (Text::isEmpty($urlField)) {
+			return $protocol . $serverDomain;
 		}
 
-		// Parse the domain from the field url (Settings->Advanced)
-		$parse = parse_url($this->url());
+		// Try to parse the URL from the field
+		$parse = parse_url($urlField);
+		
+		// If parsing failed or host is missing, fall back to auto-detection
+		if ($parse === false || empty($parse['host'])) {
+			return $protocol . $serverDomain;
+		}
+		
+		// Extract components from parsed URL
 		$domain = rtrim($parse['host'], '/');
 		$port = !empty($parse['port']) ? ':' . $parse['port'] : '';
-		$scheme = !empty($parse['scheme']) ? $parse['scheme'] . '://' : 'http://';
+		$scheme = !empty($parse['scheme']) ? $parse['scheme'] . '://' : $protocol;
 
 		return $scheme . $domain . $port;
 	}
