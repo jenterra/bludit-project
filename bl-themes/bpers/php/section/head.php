@@ -10,7 +10,4 @@
 <?php echo Theme::cssBootstrapIcons(); ?>
 <?php echo Theme::css('css/bs.css'); ?>
 <?php echo Theme::css('css/style.css'); ?>
-<!-- Google AdSense Script - Load only once -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7019258972443870"
-     crossorigin="anonymous"></script>
 <?php Theme::plugins('siteHead'); ?>

@@ -1,32 +1,60 @@
-<!-- Ads Widget -->
-<!-- 
-NOTE: This widget is included in both left and right sidebars.
-If you want to use the SAME ad in both sidebars, use the same ad slot ID below.
-If you want DIFFERENT ads in left vs right sidebars, create separate widget files
-(ads-left.php and ads-right.php) with different ad slot IDs.
+<?php
+// Generic ads widget - can be used for both sidebars if needed
+// This file loads the ads database and displays ads based on context
+// If you need separate left/right ads, use ads-left.php and ads-right.php instead
 
-INSTRUCTIONS:
-1. This file uses ONE ad slot. The same ad will appear in both sidebars.
-2. To use different ads, create ads-left.php and ads-right.php with different slot IDs.
-3. Each ad slot ID can only be used ONCE per page.
+// Load ads database
+$adsDB = new dbJSON(PATH_DATABASES . 'ads.php');
 
-Current ad slot: 6985781915
--->
+// Determine which ad to show (default to left if context not specified)
+$showLeft = (!isset($adSide) || $adSide === 'left');
+$showRight = (isset($adSide) && $adSide === 'right');
+
+if ($showLeft):
+	$leftAdImage = isset($adsDB->db['leftSidebarImage']) ? $adsDB->db['leftSidebarImage'] : '';
+	$leftAdUrl = isset($adsDB->db['leftSidebarUrl']) ? $adsDB->db['leftSidebarUrl'] : '';
+	$leftAdActive = isset($adsDB->db['leftSidebarActive']) ? $adsDB->db['leftSidebarActive'] : false;
+	
+	if ($leftAdActive && !empty($leftAdImage)):
+		$leftAdImageUrl = DOMAIN_UPLOADS . 'ads/' . $leftAdImage;
+?>
 <div class="ads-widget sidebar-widget mb-4">
 	<div class="widget-content">
 		<div class="ad-container">
-			<!-- Google AdSense Ad -->
-			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7019258972443870"
-			     crossorigin="anonymous"></script>
-			<!-- Testing -->
-			<ins class="adsbygoogle"
-			     style="display:inline-block;width:300px;height:250px"
-			     data-ad-client="ca-pub-7019258972443870"
-			     data-ad-slot="6985781915"></ins>
-			<script>
-			     (adsbygoogle = window.adsbygoogle || []).push({});
-			</script>
+			<?php if (!empty($leftAdUrl)): ?>
+				<a href="<?php echo htmlspecialchars($leftAdUrl); ?>" target="_blank" rel="nofollow noopener">
+					<img src="<?php echo htmlspecialchars($leftAdImageUrl); ?>" alt="Advertisement" class="img-fluid" style="max-width: 100%; height: auto;" />
+				</a>
+			<?php else: ?>
+				<img src="<?php echo htmlspecialchars($leftAdImageUrl); ?>" alt="Advertisement" class="img-fluid" style="max-width: 100%; height: auto;" />
+			<?php endif; ?>
 		</div>
 	</div>
 </div>
-
+<?php 
+	endif;
+elseif ($showRight):
+	$rightAdImage = isset($adsDB->db['rightSidebarImage']) ? $adsDB->db['rightSidebarImage'] : '';
+	$rightAdUrl = isset($adsDB->db['rightSidebarUrl']) ? $adsDB->db['rightSidebarUrl'] : '';
+	$rightAdActive = isset($adsDB->db['rightSidebarActive']) ? $adsDB->db['rightSidebarActive'] : false;
+	
+	if ($rightAdActive && !empty($rightAdImage)):
+		$rightAdImageUrl = DOMAIN_UPLOADS . 'ads/' . $rightAdImage;
+?>
+<div class="ads-widget sidebar-widget mb-4">
+	<div class="widget-content">
+		<div class="ad-container">
+			<?php if (!empty($rightAdUrl)): ?>
+				<a href="<?php echo htmlspecialchars($rightAdUrl); ?>" target="_blank" rel="nofollow noopener">
+					<img src="<?php echo htmlspecialchars($rightAdImageUrl); ?>" alt="Advertisement" class="img-fluid" style="max-width: 100%; height: auto;" />
+				</a>
+			<?php else: ?>
+				<img src="<?php echo htmlspecialchars($rightAdImageUrl); ?>" alt="Advertisement" class="img-fluid" style="max-width: 100%; height: auto;" />
+			<?php endif; ?>
+		</div>
+	</div>
+</div>
+<?php 
+	endif;
+endif;
+?>

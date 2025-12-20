@@ -45,6 +45,9 @@
 		<a class="nav-link" href="<?php echo HTML_PATH_ADMIN_ROOT.'settings' ?>"><span class="fa fa-gear"></span><?php $L->p('General') ?></a>
 	</li>
 	<li class="nav-item">
+		<a class="nav-link" href="<?php echo HTML_PATH_ADMIN_ROOT.'ads' ?>"><span class="fa fa-bullhorn"></span><?php $L->p('Ads Management') ?></a>
+	</li>
+	<li class="nav-item">
 		<a class="nav-link" href="<?php echo HTML_PATH_ADMIN_ROOT.'plugins' ?>"><span class="fa fa-puzzle-piece"></span><?php $L->p('Plugins') ?></a>
 	</li>
 	<li class="nav-item">
