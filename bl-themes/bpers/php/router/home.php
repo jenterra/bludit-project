@@ -10,6 +10,92 @@
 	<!-- Main Content - 4/6 width -->
 	<div class="col-main-content">
 <?php
+// Get latest 9 posts from all categories (sorted by date)
+global $pages;
+$latestPosts = array();
+
+// Get all published and sticky page keys
+$publishedKeys = $pages->getPublishedDB(true); // Get published page keys
+$stickyKeys = $pages->getStickyDB(true); // Get sticky page keys
+
+// Combine and remove duplicates
+$allPageKeys = array_unique(array_merge($publishedKeys, $stickyKeys));
+
+// Get page dates and sort by date (newest first)
+$pagesWithDates = array();
+foreach ($allPageKeys as $pageKey) {
+	if ($pages->exists($pageKey)) {
+		$pageDB = $pages->getPageDB($pageKey);
+		if ($pageDB && isset($pageDB['date'])) {
+			$pagesWithDates[$pageKey] = $pageDB['date'];
+		}
+	}
+}
+
+// Sort by date (newest first - HighToLow)
+arsort($pagesWithDates);
+$sortedPageKeys = array_keys($pagesWithDates);
+
+// Take first 9 posts
+$latestPageKeys = array_slice($sortedPageKeys, 0, 9);
+
+// Create Page objects
+foreach ($latestPageKeys as $pageKey) {
+	try {
+		$page = new Page($pageKey);
+		// Only include published and sticky pages
+		if ($page && (($page->type() == 'published') || ($page->type() == 'sticky'))) {
+			array_push($latestPosts, $page);
+		}
+	} catch (Exception $e) {
+		continue;
+	}
+}
+
+// Display latest posts section if we have posts
+if (!empty($latestPosts)):
+?>
+	<!-- Latest Posts Section -->
+	<div class="latest-posts-section mb-5">
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h2 class="section-title"><?php echo $L->g('Latest Posts') ?></h2>
+		</div>
+		
+		<div class="row">
+			<?php foreach ($latestPosts as $page): ?>
+			<?php
+				$coverVideo = method_exists($page, 'coverVideo') ? $page->coverVideo() : false;
+				$coverImage = $page->coverImage();
+			?>
+			<div class="col-md-4 col-sm-6 mb-4">
+				<a href="<?php echo $page->permalink(); ?>" class="latest-post-card">
+					<?php if ($coverVideo): ?>
+					<div class="latest-post-image video-thumb">
+						<video class="latest-post-video" src="<?php echo $coverVideo; ?>" muted playsinline></video>
+						<div class="video-play-overlay">
+							<span class="video-play-icon">&#9658;</span>
+						</div>
+					</div>
+					<?php elseif ($coverImage): ?>
+					<div class="latest-post-image">
+						<img src="<?php echo $coverImage; ?>" alt="<?php echo htmlspecialchars($page->title()); ?>" loading="lazy">
+					</div>
+					<?php endif; ?>
+					<div class="latest-post-content">
+						<h4 class="latest-post-title"><?php echo $page->title(); ?></h4>
+						<?php if ($page->description()): ?>
+						<p class="latest-post-description"><?php echo $page->description(); ?></p>
+						<?php endif; ?>
+						<small class="latest-post-meta"><?php echo $page->date(); ?></small>
+					</div>
+				</a>
+			</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+<?php endif; ?>
+
+<?php
 // Get all categories and display carousels
 global $categories;
 $hasContent = false;
@@ -216,7 +302,7 @@ if (!$hasContent): ?>
 <script>
 // Play up to 2 seconds of cover videos when hovered on home page
 document.addEventListener('DOMContentLoaded', function() {
-	var videos = document.querySelectorAll('.carousel-video, .bottom-post-video');
+	var videos = document.querySelectorAll('.carousel-video, .bottom-post-video, .latest-post-video');
 	videos.forEach(function(video) {
 		video.muted = true;
 		video.playsInline = true;
