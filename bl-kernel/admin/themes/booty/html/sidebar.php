@@ -51,6 +51,12 @@
 		<a class="nav-link" href="<?php echo HTML_PATH_ADMIN_ROOT.'weather' ?>"><span class="fa fa-cloud"></span><?php $L->p('Weather Management') ?></a>
 	</li>
 	<li class="nav-item">
+		<a class="nav-link" href="<?php echo HTML_PATH_ADMIN_ROOT.'social' ?>"><span class="fa fa-share-alt"></span><?php $L->p('Social Media') ?></a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" href="<?php echo HTML_PATH_ADMIN_ROOT.'privacy' ?>"><span class="fa fa-shield"></span><?php $L->p('Privacy Policy') ?></a>
+	</li>
+	<li class="nav-item">
 		<a class="nav-link" href="<?php echo HTML_PATH_ADMIN_ROOT.'plugins' ?>"><span class="fa fa-puzzle-piece"></span><?php $L->p('Plugins') ?></a>
 	</li>
 	<li class="nav-item">

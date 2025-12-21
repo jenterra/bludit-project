@@ -4,7 +4,14 @@
 <meta name="generator" content="Bludit">
 <meta name="developer" content="https://fiverr.com/creativitas">
 <meta name="vendor" content="https://bludit.axcora.com">
-<?php echo Theme::metaTags('title'); ?>
+<?php
+// Check if privacy-policy page and set custom title
+if (isset($url) && $url->slug() == 'privacy-policy') {
+	echo '<title>Privacy Policy | ' . $site->title() . '</title>' . PHP_EOL;
+} else {
+	echo Theme::metaTags('title');
+}
+?>
 <?php echo Theme::metaTags('description'); ?>
 <?php echo Theme::favicon('img/favicon.png'); ?>
 <?php echo Theme::cssBootstrapIcons(); ?>
